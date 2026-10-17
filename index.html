@@ -1,23 +1,50 @@
-```html
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My iOS App</title>
+<title>Carrom Aim Guide</title>
 <style>
-body {
-  background: #101827;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 60px 20px;
-}
-h1 { color: #60a5fa; }
+body{background:#172033;color:white;font-family:Arial;text-align:center;padding:20px}
+h1{color:#60a5fa}
+input,button{padding:12px;margin:8px;border-radius:8px;font-size:16px}
+button{background:#60a5fa;border:0}
+canvas{width:100%;max-width:340px;background:#d7a66b;border:8px solid #8b572a;border-radius:8px}
 </style>
 </head>
 <body>
-<h1>Welcome to My iOS App!</h1>
-<p>My first iOS app is ready.</p>
+<h1>🎯 Carrom Aim Guide</h1>
+<p>Apna shot angle choose karo</p>
+<canvas id="board" width="320" height="320"></canvas>
+<br>
+<label>Angle: <span id="val">45</span>°</label><br>
+<input id="angle" type="range" min="0" max="360" value="45">
+<br>
+<label>Power</label><br>
+<input id="power" type="range" min="1" max="100" value="50">
+<p id="info">Angle: 45° | Power: 50%</p>
+<script>
+const c=document.getElementById('board');
+const x=c.getContext('2d');
+function draw(){
+ x.clearRect(0,0,320,320);
+ x.fillStyle='#f2d6a2';x.fillRect(10,10,300,300);
+ x.strokeStyle='#8b572a';x.lineWidth=3;x.strokeRect(25,25,270,270);
+ [[70,70],[250,70],[70,250],[250,250]].forEach(([a,b])=>{
+  x.beginPath();x.arc(a,b,13,0,Math.PI*2);x.stroke();
+ });
+ x.fillStyle='#222';x.beginPath();x.arc(160,245,10,0,7);x.fill();
+ let a=Number(document.getElementById('angle').value)*Math.PI/180;
+ x.strokeStyle='#087cff';x.lineWidth=3;x.beginPath();
+ x.moveTo(160,245);x.lineTo(160+130*Math.cos(a),245-130*Math.sin(a));x.stroke();
+ x.fillStyle='#e33';x.beginPath();x.arc(160+100*Math.cos(a),245-100*Math.sin(a),7,0,7);x.fill();
+ document.getElementById('val').textContent=document.getElementById('angle').value;
+ document.getElementById('info').textContent='Angle: '+document.getElementById('angle').value+'° | Power: '+document.getElementById('power').value+'%';
+}
+document.getElementById('angle').oninput=draw;
+document.getElementById('power').oninput=draw;
+draw();
+</script>
 </body>
 </html>
-```
+
