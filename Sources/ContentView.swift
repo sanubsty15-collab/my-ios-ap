@@ -11,11 +11,9 @@ WebView()
 struct WebView: UIViewRepresentable {
 func makeUIView(context: Context) -> WKWebView {
 let webView = WKWebView()
-if let url = Bundle.main.url(forResource: "index", withExtension: "html") {
-webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-} else {
-webView.loadHTMLString("<h1>Welcome to My iOS App!</h1>", baseURL: nil)
-}
+let html = """ <html> <body style="background:#172033;color:white;text-align:center;font-family:Arial;padding-top:100px"> <h1>Carrom Aim Guide</h1> <p>Your aiming guide is ready!</p> </body> </html>
+"""
+webView.loadHTMLString(html, baseURL: nil)
 return webView
 }
 
