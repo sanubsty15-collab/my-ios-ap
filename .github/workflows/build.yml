@@ -21,8 +21,12 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
+      - name: Check project schemes
+        run: xcodebuild -list -project MyIOSApp.xcodeproj
+
       - name: Build unsigned app
         run: |
+          set -o pipefail
           xcodebuild \
             -project MyIOSApp.xcodeproj \
             -scheme MyIOSApp \
@@ -35,12 +39,14 @@ jobs:
             clean build
 
       - name: Package unsigned IPA
+        if: success()
         run: |
           mkdir -p Payload
           cp -R build/Build/Products/Release-iphoneos/MyIOSApp.app Payload/
-          zip -r MyIOSApp.ipa Payload
+          /usr/bin/zip -r MyIOSApp.ipa Payload
 
       - name: Upload IPA
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: MyIOSApp-unsigned-IPA
