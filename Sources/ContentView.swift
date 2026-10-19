@@ -18,28 +18,38 @@ struct WebView: UIViewRepresentable {
         <!DOCTYPE html>
         <html>
         <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="viewport"
+            content="width=device-width, initial-scale=1.0">
             <style>
                 body {
-                    background: #172033;
+                    background: #111827;
                     color: white;
-                    text-align: center;
                     font-family: Arial, sans-serif;
-                    padding: 100px 20px 0;
+                    text-align: center;
+                    padding: 40px 20px;
                 }
-
                 h1 {
-                    color: #55D6BE;
+                    color: #38bdf8;
+                    font-size: 32px;
                 }
-
-                p {
+                button {
+                    background: #0284c7;
+                    color: white;
+                    border: none;
+                    padding: 15px 30px;
+                    border-radius: 12px;
                     font-size: 18px;
+                    margin-top: 20px;
                 }
             </style>
         </head>
         <body>
-            <h1>Carrom Aim Guide</h1>
-            <p>Your aiming guide is ready!</p>
+            <h1>Hello! 👋</h1>
+            <p>Meri pehli iPhone app</p>
+            <button onclick="document.getElementById('msg').innerText='App chal rahi hai!'">
+                Click Karo
+            </button>
+            <p id="msg"></p>
         </body>
         </html>
         """
@@ -49,6 +59,9 @@ struct WebView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        // No updates needed
     }
+}
+
+#Preview {
+    ContentView()
 }
