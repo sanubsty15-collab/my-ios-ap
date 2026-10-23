@@ -1,4 +1,4 @@
-
+          
 name: Build iOS App
 
 on:
@@ -9,30 +9,27 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Show Xcode version
+        run: xcodebuild -version
+
       - name: Install XcodeGen
         run: brew install xcodegen
 
-      - name: Generate Xcode project
+      - name: Generate project
         run: xcodegen generate
 
-      - name: Check Xcode version
-        run: xcodebuild -version
-
-      - name: Check project schemes
+      - name: List schemes
         run: xcodebuild -list -project MyIOSApp.xcodeproj
 
-      - name: Check SwiftUICore references
-        run: |
-          grep -n "SwiftUICore" \
-            MyIOSApp.xcodeproj/project.pbxproj || true
-
-      - name: Build unsigned app
+      - name: Build app
+        id: build_app
+        continue-on-error: true
         run: |
           set -o pipefail
           xcodebuild \
@@ -42,18 +39,26 @@ jobs:
             -sdk iphoneos \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build 2>&1 | tee build.log
 
-      - name: Package unsigned IPA
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-Build-Log
+          path: build.log
+          if-no-files-found: ignore
+
+      - name: Stop if build failed
+        if: steps.build_app.outcome == 'failure'
+        run: exit 1
+
+      - name: Package IPA
         if: success()
         run: |
           mkdir -p Payload
-          cp -R \
-            build/Build/Products/Release-iphoneos/MyIOSApp.app \
-            Payload/
-          /usr/bin/zip -r MyIOSApp.ipa Payload
+          cp -R build/Build/Products/Release-iphoneos/MyIOSApp.app Payload/
+          zip -r MyIOSApp.ipa Payload
 
       - name: Upload IPA
         if: success()
